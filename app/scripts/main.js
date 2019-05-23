@@ -61,6 +61,27 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
+function subscribeUser() {
+  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+  swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: applicationServerKey
+  })
+  .then(function(subscription) {
+    console.log('User is subscribed:', subscription);
+
+    updateSubscriptionOnServer(subscription);
+
+    isSubscribed = true;
+
+    updateBtn();
+  })
+  .catch(function(err) {
+    console.log('Failed to subscribe the user: ', err);
+    updateBtn();
+  });
+}
+
 function initialiseUI() {
   pushButton.addEventListener('click', function() {
     pushButton.disabled = true;
@@ -98,26 +119,7 @@ function updateBtn() {
   pushButton.disabled = false;
 }
 
-function subscribeUser() {
-  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
-  swRegistration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: applicationServerKey
-  })
-  .then(function(subscription) {
-    console.log('User is subscribed:', subscription);
 
-    updateSubscriptionOnServer(subscription);
-
-    isSubscribed = true;
-
-    updateBtn();
-  })
-  .catch(function(err) {
-    console.log('Failed to subscribe the user: ', err);
-    updateBtn();
-  });
-}
 
 function updateSubscriptionOnServer(subscription) {
   // TODO: Send subscription to application server
